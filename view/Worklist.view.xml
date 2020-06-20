@@ -1,0 +1,206 @@
+<mvc:View controllerName="com.salesbom.culligan.salesbomdisplay.controller.Worklist" xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:fb="sap.ui.comp.filterbar" xmlns:l="sap.ui.layout"
+	xmlns:table="sap.ui.table" xmlns:smartTable="sap.ui.comp.smarttable">
+	<Shell id="shell">
+		<App id="app">
+			<pages>
+				<Page id="page" title="Sales Order BOM">
+					<content>
+						<IconTabBar id="iconTabBar" class="sapUiResponsiveContentPadding" upperCase="false" expandable="false" selectedKey="infoTabKey"
+							headerMode="Inline" select="handleIconTabBarSelect">
+							<items>
+								<IconTabFilter id="iconTabBarFilter1" icon="sap-icon://my-sales-order" key="infoTabKey" iconColor="Positive" design="Horizontal"
+									text="Sales Order" tooltip="Sales Order" count="{worklistView>/bomMaterialTableCount}">
+									<l:VerticalLayout width="100%">
+										<fb:FilterBar reset="onReset" search="onGoSales" id="btnId" showRestoreButton="false" showClearButton="true" clear="onClear">
+											<fb:filterGroupItems>
+												<fb:FilterGroupItem groupName="__$INTERNAL$" name="A" label="Sales Order" partOfCurrentVariant="true" visibleInFilterBar="true"
+													mandatory="true">
+													<fb:control>
+														<Input id="salesInput" placeholder="Enter Sales Order" width="206px" submit="onEnterMatNo" required="true" showValueHelp="false"
+															valueHelpRequest="onFrag"></Input>
+													</fb:control>
+												</fb:FilterGroupItem>
+											</fb:filterGroupItems>
+										</fb:FilterBar>
+									</l:VerticalLayout>
+									<Table items="{SAM>/}" id="tab" alternateRowColors="true" sticky="ColumnHeaders" updateFinished=".onSalesFinished" growing="true"
+										growingScrollToLoad="true">
+										<headerToolbar>
+											<Toolbar>
+												<Title level="H1" text="{salesView>/salesTableTitle}"/>
+												<ToolbarSpacer/>
+												<SearchField id="salessearchField" tooltip="Search" search=".onSearch">
+													<layoutData>
+														<OverflowToolbarLayoutData maxWidth="200px" priority="NeverOverflow"/>
+													</layoutData>
+												</SearchField>
+												<Button id="idExportToExcel" tooltip="Export to Excel" text="Export to Excel" type="Emphasized" press="salesonDataExport"
+													icon="sap-icon://excel-attachment" iconFirst="true"/>
+											</Toolbar>
+										</headerToolbar>
+										<columns>
+											<Column >
+												<Text text="Sales Order"/>
+											</Column>
+											<Column hAlign="Center">
+												<Text text="Sales Order Line Item"/>
+											</Column>
+											<Column>
+												<Text text="Material"/>
+											</Column>
+											<Column hAlign="Center">
+												<Text text="Category"/>
+											</Column>
+											<Column>
+												<Text text="Plant"/>
+											</Column>
+											<Column>
+												<Text text="Description"/>
+											</Column>
+											<Column hAlign="Center">
+												<Text text="Quantity"/>
+											</Column>
+											<Column hAlign="Center">
+												<Text text="Standard Cost"/>
+											</Column>
+											<Column>
+												<Text text="Calculated Standard Cost"/>
+											</Column>
+										</columns>
+										<infoToolbar>
+											<OverflowToolbar id="vsdFilterBar" visible="false">
+												<Text id="vsdFilterLabel"/>
+											</OverflowToolbar>
+										</infoToolbar>
+										<items>
+											<ColumnListItem>
+												<Text text="{SAM>SalesOrder}"/>
+												<Text text="{SAM>SalesOrderItem}"/>
+												<Text text="{SAM>Material}"/>
+												<Text text="{SAM>SalesOrderItemCategory}"/>
+												<Text text="{SAM>ProductionPlant}"/>
+												<Text text="{SAM>SalesOrderItemText}"/>
+												<Text text="{SAM>RequestedQuantity}"/>
+												<Text text="{}"/>
+												<Text text="{}"/>
+											</ColumnListItem>
+										</items>
+									</Table>
+								</IconTabFilter>
+								<IconTabSeparator icon="sap-icon://vertical-grip"/>
+								<IconTabFilter id="iconTabBarFilter2" icon="sap-icon://SAP-icons-TNT/bill-of-material" key="replaceCompTabKey" iconColor="Critical"
+									design="Horizontal" text="Material" tooltip="Material" count="{worklistView>/bomMaterialReplTableCount}">
+									<l:VerticalLayout width="100%">
+										<fb:FilterBar reset="onReset" search="matonGo" id="matbtnId" showRestoreButton="false" showClearButton="true" clear="onClear">
+											<fb:filterGroupItems>
+												<fb:FilterGroupItem groupName="__$INTERNAL$" name="B" label="Material" partOfCurrentVariant="true" visibleInFilterBar="true"
+													mandatory="true">
+													<fb:control>
+														<Input id="matmultiInput" placeholder="Enter Material" width="206px" required="true" showValueHelp="false" valueHelpRequest="onFrag"></Input>
+													</fb:control>
+												</fb:FilterGroupItem>
+												<fb:FilterGroupItem groupName="__$INTERNAL$" name="C" label="Plant" labelTooltip="Plant" mandatory="true" partOfCurrentVariant="true"
+													visibleInFilterBar="true">
+													<fb:control>
+														<Input id="matidPlant" placeholder="Enter Plant" class="apUiLargeMarginBegin" width="206px" required="true" liveChange="onLiveChange"/>
+													</fb:control>
+												</fb:FilterGroupItem>
+												<fb:FilterGroupItem groupName="__$INTERNAL$" name="D" label="BOM Usage" partOfCurrentVariant="true" visibleInFilterBar="true">
+													<fb:control>
+														<Input id="matidBOM" width="206px" editable="false"></Input>
+													</fb:control>
+												</fb:FilterGroupItem>
+												<fb:FilterGroupItem groupName="__$INTERNAL$" name="E" label="Standard Cost" partOfCurrentVariant="true" visibleInFilterBar="true">
+													<fb:control>
+														<Input id="matidSC" width="206px" editable="false"></Input>
+													</fb:control>
+												</fb:FilterGroupItem>
+												<fb:FilterGroupItem groupName="__$INTERNAL$" name="F" label="Per Unit Cost" partOfCurrentVariant="true" visibleInFilterBar="true">
+													<fb:control>
+														<Input id="matidPSC" width="206px" editable="false"></Input>
+													</fb:control>
+												</fb:FilterGroupItem>
+											</fb:filterGroupItems>
+										</fb:FilterBar>
+									</l:VerticalLayout>
+									<Table items="{BRF>/}" id="mattab" sticky="ColumnHeaders" alternateRowColors="true" updateFinished=".onUpdateFinished" growing="true"
+										growingScrollToLoad="true">
+										<headerToolbar>
+											<Toolbar>
+												<Title level="H1" text="{worklistView>/worklistTableTitle}"/>
+												<ToolbarSpacer/>
+												<SearchField id="matsearchField" tooltip="Search by BOM Component" search=".onSearch">
+													<layoutData>
+														<OverflowToolbarLayoutData maxWidth="200px" priority="NeverOverflow"/>
+													</layoutData>
+												</SearchField>
+												<Button id="matidExportToExcel" tooltip="Export to Excel" text="Export to Excel" type="Emphasized" width="12%" press="matonDataExport"
+													icon="sap-icon://excel-attachment" iconFirst="true"/>
+											</Toolbar>
+										</headerToolbar>
+										<columns>
+											<Column>
+												<Text text="Header Material"/>
+											</Column>
+											<Column hAlign="Center">
+												<Text text="Level"/>
+											</Column>
+											<Column hAlign="Center">
+												<Text text="Is Assembly"/>
+											</Column>
+											<Column hAlign="Center">
+												<Text text="BOM Usage"/>
+											</Column>
+											<Column hAlign="Center">
+												<Text text="BOM Item No"/>
+											</Column>
+											<Column>
+												<Text text="BOM Component"/>
+											</Column>
+											<Column width="25%">
+												<Text text="Component Description"/>
+											</Column>
+											<Column hAlign="Center">
+												<Text text="BOM Quantity"/>
+											</Column>
+											<Column hAlign="Center">
+												<Text text="Standard Cost"/>
+											</Column>
+											<Column hAlign="Center">
+												<Text text="Per Unit Cost"/>
+											</Column>
+											<Column hAlign="Center">
+												<Text text="Total Standard Cost"/>
+											</Column>
+										</columns>
+										<items>
+											<ColumnListItem>
+												<ObjectIdentifier title="{BRF>mat}"/>
+												<Text text="{BRF>lvl}"/>
+												<Text text="{BRF>asm}"/>
+												<Text text="{BRF>usg}"/>
+												<Text text="{BRF>itm}"/>
+												<ObjectIdentifier title="{BRF>bom}"/>
+												<Text text="{BRF>des}"/>
+												<Text text="{BRF>qty}"/>
+												<Text text="{BRF>stc}"/>
+												<Text text="{BRF>psc}"/>
+												<Text text="{BRF>tsc}"/>
+											</ColumnListItem>
+										</items>
+									</Table>
+								</IconTabFilter>
+							</items>
+						</IconTabBar>
+					</content>
+					<footer>
+						<OverflowToolbar>
+							<ToolbarSpacer/>
+						</OverflowToolbar>
+					</footer>
+				</Page>
+			</pages>
+		</App>
+	</Shell>
+</mvc:View>
