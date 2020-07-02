@@ -1,0 +1,1 @@
+sap.ui.define([],function(){"use strict";return{hideSalesbom:function(e,n){if(e>0){if(n==="TAP"||n==="CBTP"){return""}return e}else{return""}}}});
