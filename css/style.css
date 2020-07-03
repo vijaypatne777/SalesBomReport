@@ -1,0 +1,10 @@
+.sapMListTblCell:not(:first-child) {
+  border-left: 1px solid #ccc;
+  /*border-top: 1px solid #ccc;*/
+}
+.sapMListTblCell:nth-last-child(3) {
+  border-right: 1px solid #ccc;
+}
+/*.sapMListTblCell:not(:first-child(3)) {*/
+/*  border-top: 10px solid #ccc;*/
+/*}*/
